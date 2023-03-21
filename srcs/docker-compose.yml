@@ -1,0 +1,21 @@
+version: '3.9'
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:custom
+    build:
+      context: ./requirements/nginx
+    restart: always
+    env_file: .env
+    volumes:
+      - wordpress_data:/var/www/html
+    ports:
+      - 443:443
+
+wordpress_data:
+  name: wordpress_data
+  driver: local
+  driver_opts:
+    type: none
+    device: /home/athekkep/data/wordpress
+    o: bind
