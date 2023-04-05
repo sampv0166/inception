@@ -5,17 +5,86 @@ services:
     image: nginx:custom
     build:
       context: ./requirements/nginx
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     restart: always
     env_file: .env
     volumes:
       - wordpress_data:/var/www/html
     ports:
       - 443:443
+    depends_on:
+      - wordpress
+    networks:
+      - custom
 
-wordpress_data:
-  name: wordpress_data
-  driver: local
-  driver_opts:
-    type: none
-    device: /home/athekkep/data/wordpress
-    o: bind
+  mariadb:
+    container_name: mariadb
+    image: mariadb:custom
+    build:
+      context: ./requirements/mariadb
+      args:
+        SLEEP_TIME: ${SLEEP_TIME}
+        MYSQL_NAME: ${MYSQL_NAME}
+        MYSQL_USER: ${MYSQL_USER}
+        MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    env_file: .env
+    restart: always
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - custom
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-uroot',
+          '-p${MYSQL_ROOT_PASSWORD}',
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 5s
+
+  wordpress:
+    container_name: wordpress
+    image: wordpress:custom
+    build: ./requirements/wordpress
+    env_file: .env
+    # environment:
+    #   - REDIS_BONUS=1
+    restart: always
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - custom
+
+networks:
+  custom:
+    name: custom
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    name: mariadb_data
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/data/database
+      o: bind
+
+  wordpress_data:
+    name: wordpress_data
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/data/wordpress
+      o: bind
