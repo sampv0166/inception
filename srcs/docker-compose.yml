@@ -78,7 +78,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/data/database
+      device: /home/athekkep/data/database
       o: bind
 
   wordpress_data:
@@ -86,5 +86,5 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/data/wordpress
+      device: /home/athekkep/data/wordpress
       o: bind
