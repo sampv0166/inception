@@ -13,11 +13,12 @@ RUN apt update -y && \
 # generate a new RSA key with 2048 bit length
 # save the key ssl folder
 # save the certificate to ssl folder
+
 RUN mkdir /etc/nginx/ssl && \
 	openssl req -x509 -newkey rsa:2048 -days 365 -nodes \
 		-keyout /etc/nginx/ssl/certificate.key \
 		-out /etc/nginx/ssl/certificate.crt \
-		-subj "/CN=AE/ST=AbuDhabi/O=apila-va/CN=localhost"
+		-subj "/CN=localhost"
 
 COPY ./conf/default.conf /etc/nginx/sites-enabled/default
 

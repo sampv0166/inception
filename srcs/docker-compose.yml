@@ -2,7 +2,10 @@ version: '3.9'
 services:
   nginx:
     container_name: nginx
-    image: nginx:custom
+   
+   
+
+   
     build:
       context: ./requirements/nginx
       args:
