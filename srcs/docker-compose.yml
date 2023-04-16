@@ -2,14 +2,9 @@ version: '3.9'
 services:
   nginx:
     container_name: nginx
-   
-   
-
-   
+    image: nginx:custom
     build:
       context: ./requirements/nginx
-      args:
-        DOMAIN_NAME: ${DOMAIN_NAME}
     restart: always
     env_file: .env
     volumes:
@@ -20,7 +15,6 @@ services:
       - wordpress
     networks:
       - custom
-
   mariadb:
     container_name: mariadb
     image: mariadb:custom
@@ -52,15 +46,12 @@ services:
       interval: 5s
       timeout: 10s
       retries: 5
-      start_period: 5s
-
+      start_period: 5s # seconds to wait before starting the healthcheck
   wordpress:
     container_name: wordpress
     image: wordpress:custom
     build: ./requirements/wordpress
     env_file: .env
-    # environment:
-    #   - REDIS_BONUS=1
     restart: always
     volumes:
       - wordpress_data:/var/www/html
@@ -74,14 +65,13 @@ networks:
   custom:
     name: custom
     driver: bridge
-
 volumes:
   mariadb_data:
     name: mariadb_data
     driver: local
     driver_opts:
       type: none
-      device: /home/athekkep/data/database
+      device: /home/apila-va/data/database
       o: bind
 
   wordpress_data:
@@ -89,5 +79,5 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/athekkep/data/wordpress
+      device: /home/apila-va/data/wordpress
       o: bind

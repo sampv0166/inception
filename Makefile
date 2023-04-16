@@ -13,7 +13,7 @@ NETWORK			= custom
 WP_VOLUME 		= wordpress_data
 DB_VOLUME 		= mariadb_data
 
-VOLUME_DIR 		= /home/athekkep/data
+VOLUME_DIR 		= /home/apila-va/data
 WP_VOLUME_DIR	= ${VOLUME_DIR}/wordpress
 DB_VOLUME_DIR	= ${VOLUME_DIR}/database
 
@@ -32,7 +32,7 @@ create_volumes:
 	sudo mkdir -p ${WP_VOLUME_DIR} ${DB_VOLUME_DIR}
 
 goin_nginx:
-	docker exec -it ${NGINX_CNTNR} /bin/bash
+	docker exec -it ${NGINX_CNTNR} /bin/bash # -it = interactive mode
 
 goin_mariadb:
 	docker exec -it ${MARIA_CNTNR} /bin/bash
@@ -44,7 +44,7 @@ clean:
 	docker rm -f ${NGINX_CNTNR} ${MARIA_CNTNR} ${WRDPR_CNTNR}
 	docker rmi -f ${NGINX_IMAGE} ${MARIA_IMAGE} ${WRDPR_IMAGE}
 	sudo rm -rf ${WP_VOLUME_DIR}/* ${DB_VOLUME_DIR}/*
-	docker volume rm -f ${WP_VOLUME} ${DB_VOLUME}
+	sudo docker volume rm -f ${WP_VOLUME} ${DB_VOLUME}
 	if docker network inspect ${NETWORK} > /dev/null; then \
         docker network rm ${NETWORK}; \
     fi

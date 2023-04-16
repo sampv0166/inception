@@ -15,7 +15,7 @@ ARG WP_FILE_DOC=latest.tar.gz
 # mariadb client = allows to connect to mariadb server
 # remove packages that were installed as dependencies and no londer needed
 # remove downloaded packges
-# remove cached data to reduce the image size
+# remove cached data 
 
 
 RUN apt update -y && \
@@ -53,8 +53,8 @@ RUN wget ${WP_FILE_SRC} && \
 	tar xzvf ${WP_FILE_DOC} --strip-components=1 && \
 	rm -rf ${WP_FILE_DOC}
 
-# Change the owner of the current directory and sub-directories  to www-data .
-#  www-data is user and group that the webserver typically runs in linux distros
+# Change the owner of the current directory and sub-directories to www-data .
+# www-data is user and group that the webserver typically runs in linux distros
 # this commadn ensures that the web server has necessory permissions to access and modify the files-
 # in the directory
 RUN chown -R www-data:www-data . && chmod -R 775 .

@@ -1,5 +1,14 @@
 #! /bin/bash
 
+# Download wordpress:
+# https://wordpress.org/documentation/article/how-to-install-wordpress/
+# https://wordpress.org/documentation/article/creating-database-for-wordpress/
+# https://www.cloudways.com/blog/install-wordpress-using-wp-cli/
+# https://make.wordpress.org/cli/handbook/how-to/how-to-install/
+# https://wordpress.org/documentation/article/how-to-install-wordpress/
+
+#sleep ${SLEEP_TIME}	# To ensure that mysql is running
+
 # p-config.php is a configuration file used by WordPress to define its database connection, 
 # installation path, security keys, and other important settings. It is required for the correct 
 # functioning of WordPress and is automatically generated during the installation process. 
@@ -19,6 +28,7 @@ else
 		--dbhost=${MYSQL_HOST}
 
 	echo "WordPress: installing"
+
 	wp core install --allow-root \
 		--url=${WP_URL} \
 		--title=${WP_TITLE} \
@@ -31,16 +41,14 @@ else
 		${WP_USER_NAME} ${WP_USER_EMAIL} \
 		--role=${WP_USER_ROLE} \
 		--user_pass=${WP_USER_PASSWORD}
-	
-	    # change thw owner of the directory to the specified user:group to make sure that server 
+	# change thw owner of the directory to the specified user:group to make sure that server 
     # has access the files in the var/www/html directory
 	chown -R www-data:www-data /var/www/html
-		# set read write and execute permision
+	# set read write and execute permision
 	chmod -R 775 /var/www/html
-	    # The g+w option is giving the group write permission, 
+	# The g+w option is giving the group write permission, 
     # so any user in the www-data group can write to the files in the directory.
 	chmod -R g+w /var/www/html
-
 fi
 
 #/usr/sbin/php-fpm7.3 -R -F is a command that starts the PHP-FPM (FastCGI Process Manager)

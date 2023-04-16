@@ -12,7 +12,7 @@ RUN apt update -y && \
     apt -y clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Adjust the mysql configuration to listen to 0.0.0.0:3306
+# Adjust the mysql configuration to listen to all ip addresses
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN chmod o-w /etc/mysql/mariadb.conf.d/50-server.cnf
 
@@ -26,5 +26,15 @@ RUN service mysql start && sleep ${SLEEP_TIME} && \
 	FLUSH PRIVILEGES;"
 
 EXPOSE 3306
+ 
+ENTRYPOINT [ "mysqld" ]
 
-ENTRYPOINT [ "mysqld_safe" ]
+
+
+# '@'% user can connect from any host
+# .* grant privilages to all tables in the databas
+# update mysql.user toable hosts to all hosts to let the root user connect from any host
+# alter the password of the root user. specifies the username and host of the user 
+# account that will have its password changed
+# when user acccounts are modified we need to flush the sql server memmoery for the changes 
+# to be in effect immediately
