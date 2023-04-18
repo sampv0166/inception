@@ -1,0 +1,22 @@
+# mysql 
+MYSQL_ROOT_PASSWORD=root_password
+MYSQL_USER=apila-va
+MYSQL_PASSWORD=password
+MYSQL_NAME=wordpressdb
+MYSQL_HOST=mariadb
+
+# wordpress admin setup 
+WP_URL=localhost
+WP_TITLE=my_website
+WP_ADMIN_NAME=apila-va
+WP_ADMIN_PASSWORD=apila-va4333
+WP_ADMIN_EMAIL=sampv0166@gmail.com
+
+#  wordpress user
+WP_USER_NAME=someuser
+WP_USER_PASSWORD=password
+WP_USER_EMAIL=user@example.com
+WP_USER_ROLE=subscriber
+
+DOMAIN_NAME=apila-va.42.fr
+SLEEP_TIME=5
