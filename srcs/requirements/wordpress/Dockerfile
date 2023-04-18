@@ -5,65 +5,53 @@ ARG WP_CLI_DOC=wp-cli.phar
 ARG WP_FILE_SRC=https://wordpress.org/latest.tar.gz
 ARG WP_FILE_DOC=latest.tar.gz
 
-
-# udpate the package repository 
-# install
-# php
-# php-fpm = fast CGI (common gateway interface) for php used to run php scripts
-# php-mysqli = php module used to communicate with mysql databses
-# wget = is a command line tool that can be used to download the latest wordpress software
-# mariadb client = allows to connect to mariadb server
-# remove packages that were installed as dependencies and no londer needed
-# remove downloaded packges
-# remove cached data 
-
-
 RUN apt update -y && \
 	apt install -y \
-		php php-fpm php-mysqli \
-		wget mariadb-client && \
-    apt -y autoremove && \
-    apt -y clean && \
-    rm -rf /var/lib/apt/lists/*
+	php php-fpm php-mysqli \
+	wget mariadb-client sendmail
 
-# first directory is used to store PID file which can be used to track the php process
-# second directory is the default web root directory for nginx.all website files can be stored here
+# this directory is needed to store PID file which FPM uses to track the php processess
+RUN mkdir -p /run/php  && mkdir -p /var/www/html
 
-RUN mkdir -p /run/php && mkdir -p /var/www/html
-
+# change the defauult www.conf file for php-fpm to listen to port 9000 .
 COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
 
 # get wordpress cli and set execute permission to the file
-# move the cli file to global directory so that we can use wp command from anywhere in the system 
+# move the cli file to a global directory so that we can use wp command from anywhere in the system 
 RUN wget ${WP_CLI_SRC} && \
 	chmod +x ${WP_CLI_DOC} && \
 	mv ${WP_CLI_DOC} /usr/local/bin/wp
 
-# Change the working directory
 WORKDIR /var/www/html
 
-# download wordpress files from the link and saves it to the current wowrking directory
-# extract the files using the tar command , --strip components us used to remove the top level directory -
-# and place the files directly in to the current working directory
+RUN wget ${WP_FILE_SRC} && \
+	tar xzvf ${WP_FILE_DOC} --strip-components=1
+
+# Change the owner of the current directory and sub-directories to www-data .
+# www-data is user and group that the webserver runs
+RUN chown -R www-data:www-data . && chmod -R 775 .
+
+# Set up WP for entrypoint for php-requests
+EXPOSE 9000
+
+COPY ./tools/entrypoint.sh /usr/local/bin/
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["entrypoint.sh"]
+
+# php-fpm = fast CGI (common gateway interface) for php used to run php scripts
+# php-mysqli = php module used to communicate with mysql databses
+# wget = is a command line tool that can be used to download the latest wordpress software
+# mariadb client = allows to connect to mariadb server
+
 # "x" stands for extract
 # "z" stands for gunzip (decompress)
 # "v" stands for verbose (show the files being extracted)
 # "f" stands for file (specify the filename of the archive)
-RUN wget ${WP_FILE_SRC} && \
-	tar xzvf ${WP_FILE_DOC} --strip-components=1 && \
-	rm -rf ${WP_FILE_DOC}
+# -R apply the changes recursively to all directory files and subdirectories
 
-# Change the owner of the current directory and sub-directories to www-data .
-# www-data is user and group that the webserver typically runs in linux distros
-# this commadn ensures that the web server has necessory permissions to access and modify the files-
-# in the directory
-RUN chown -R www-data:www-data . && chmod -R 775 .
 
-# Set up WP for entrypoint
-EXPOSE 9000
-#  copy the entrypoint file to usr/local/bin so that i can run the script from anywhere
-COPY ./tools/entrypoint.sh /usr/local/bin/
-#  sets the execute permission the entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT ["entrypoint.sh"]
+# PHP-FPM is a process manager for PHP that allows you to run PHP code as a separate process 
+# from the web server. This provides better performance and stability for PHP applications, 
+# especially in high-traffic environments.

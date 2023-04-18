@@ -7,13 +7,14 @@ ARG MYSQL_PASSWORD
 ARG MYSQL_ROOT_PASSWORD
 
 RUN apt update -y && \
-	apt install procps mariadb-server -y && \
-    apt -y autoremove && \
-    apt -y clean && \
-    rm -rf /var/lib/apt/lists/*
+	apt install procps mariadb-server -y 
 
 # Adjust the mysql configuration to listen to all ip addresses
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+
+#  having a world-writable configuration file is considered a security risk,
+#  and MariaDB is designed to ignore such files.
+#  to remove the write permission for the "other" category of users
 RUN chmod o-w /etc/mysql/mariadb.conf.d/50-server.cnf
 
 # Run mysql and create database along with users
@@ -25,7 +26,6 @@ RUN service mysql start && sleep ${SLEEP_TIME} && \
 	ALTER USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}'; \
 	FLUSH PRIVILEGES;"
 
-EXPOSE 3306
  
 ENTRYPOINT [ "mysqld" ]
 

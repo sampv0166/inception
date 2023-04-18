@@ -7,9 +7,7 @@
 # https://make.wordpress.org/cli/handbook/how-to/how-to-install/
 # https://wordpress.org/documentation/article/how-to-install-wordpress/
 
-#sleep ${SLEEP_TIME}	# To ensure that mysql is running
-
-# p-config.php is a configuration file used by WordPress to define its database connection, 
+# config.php is a configuration file used by WordPress to define its database connection, 
 # installation path, security keys, and other important settings. It is required for the correct 
 # functioning of WordPress and is automatically generated during the installation process. 
 # Without it, WordPress would not be able to access its database, which means that it wouldn't be 
@@ -43,17 +41,16 @@ else
 		--user_pass=${WP_USER_PASSWORD}
 	# change thw owner of the directory to the specified user:group to make sure that server 
     # has access the files in the var/www/html directory
-	chown -R www-data:www-data /var/www/html
+	# chown -R www-data:www-data /var/www/html
 	# set read write and execute permision
-	chmod -R 775 /var/www/html
+	# chmod -R 775 /var/www/html
 	# The g+w option is giving the group write permission, 
     # so any user in the www-data group can write to the files in the directory.
-	chmod -R g+w /var/www/html
+	# chmod -R g+w /var/www/html
 fi
 
-#/usr/sbin/php-fpm7.3 -R -F is a command that starts the PHP-FPM (FastCGI Process Manager)
+#/usr/sbin/php-fpm7.3 -F is a command that starts the PHP-FPM (FastCGI Process Manager)
 # service with the configuration specified in the /etc/php/7.3/fpm/php-fpm.conf file.
-# The -R option causes PHP-FPM to run in foreground mode and print the logs to the console. 
 # The -F option prevents the service from running in daemon mode, which is useful when running 
 # the service inside a Docker container.
 
@@ -62,4 +59,4 @@ fi
 # especially in high-traffic environments.
 
 
-/usr/sbin/php-fpm7.3 -R -F
+/usr/sbin/php-fpm7.3 -F
