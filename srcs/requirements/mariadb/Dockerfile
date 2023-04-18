@@ -38,3 +38,5 @@ ENTRYPOINT [ "mysqld" ]
 # account that will have its password changed
 # when user acccounts are modified we need to flush the sql server memmoery for the changes 
 # to be in effect immediately
+
+# mysql -u root -p

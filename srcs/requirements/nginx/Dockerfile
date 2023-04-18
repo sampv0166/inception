@@ -33,3 +33,5 @@ ENTRYPOINT ["nginx", "-g", "daemon off;"]
 # directive (daemon off) to nginx process to keep it running untill the container is stopped or terminated
 
 # https://stackoverflow.com/questions/41303885/nginx-do-i-really-need-sites-available-and-sites-enabled-folders
+
+# openssl s_client -connect example.com:443 -tls1_3
